@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shabab News — Web
 
-## Getting Started
+An immersive, parallax-3D website for **Shabab News**, Lebanon's youth platform for
+students. It reuses the same content and Firebase backend as the mobile app, with a
+completely new design language: deep space-black surfaces, brand-teal glow, smooth
+scroll, scroll-triggered reveals and cursor-tilting 3D cards.
 
-First, run the development server:
+## Tech stack
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS v4** for styling
+- **Framer Motion** for animation / parallax + **Lenis** for smooth scroll
+- **Firebase** (Firestore + Auth) — the same `shabab-news-79e57` project as the app
+- **Google Generative AI** (`gemini-1.5-flash`) for the "Farah" assistant
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy your keys into `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+GEMINI_API_KEY=...             # server-side, used by /api/chat (preferred)
+NEXT_PUBLIC_GEMINI_API_KEY=... # optional fallback
+```
 
-## Learn More
+Without a key, the chatbot still loads and shows a friendly "add a key" message.
 
-To learn more about Next.js, take a look at the following resources:
+## Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Route | Description |
+|-------|-------------|
+| `/` | Immersive parallax home (hero, news, universities, events, tools, offers) |
+| `/news`, `/news/[id]` | Filterable news feed + parallax article pages |
+| `/events` | Event grid with live countdowns + detail modal + Google Calendar export |
+| `/universities`, `/schools` | Filterable directories with rich detail modals |
+| `/jobs`, `/offers` | Careers board and student-deal cards |
+| `/chatbot` | "Farah" AI assistant (Gemini via `/api/chat`) |
+| `/grade-calculator`, `/career-simulator`, `/cv-builder`, `/portfolio-builder`, `/learning` | Student tools |
+| `/calendar`, `/map` | Month calendar + GPS campus explorer |
+| `/login`, `/register`, `/profile` | Firebase auth |
+| `/about`, `/privacy` | Static pages |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
+```
+app/            Routes (App Router)
+components/     UI + layout + motion primitives (Reveal, Parallax, Tilt, SmoothScroll)
+lib/            Firebase, auth, data services, types, and ported content
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Content falls back to bundled static data (`lib/content.ts`, `lib/universities.ts`,
+`lib/schools.ts`, `lib/campuses.ts`) whenever the matching Firestore collection is empty.
